@@ -9,11 +9,11 @@ namespace Chapter5_3
 	abstract class Shape
 	{
 
-		protected char sym = '$';
-		protected int height;
-		protected int pos;
-		protected int indentHigh;
-		protected int indentLow;
+		private char sym = '$';
+		private int height;
+		private int pos;
+		private int indentHigh;
+		private int indentLow;
 
 		public char Sym
 		{
@@ -100,6 +100,11 @@ namespace Chapter5_3
 			IndentLow += low;
 		}
 
+		public void Scale(double k)
+		{
+			Height = (int)(k * double.Parse(Height.ToString()));
+		}
+
 		protected void MoveRight()
 		{
 			for (int i = 0; i < pos; i++)
@@ -132,70 +137,61 @@ namespace Chapter5_3
 		}
 
 		public abstract void Draw();
-		public abstract void Scale(double k);
 	}
 	class Square : Shape
 	{
 		public Square(int height = 1)
 		{
-			this.height = height;
+			Height = height;
 		}
 		public override void Draw()
 		{
 			WriteBorder();
-			MoveY(indentHigh);
-			for (int i = 0; i < height; i++)
+			MoveY(IndentHigh);
+			for (int i = 0; i < Height; i++)
 			{
 				MoveRight();
-				for (int j = 0; j < height; j++)
+				for (int j = 0; j < Height; j++)
 				{
-					Console.Write(sym);
+					Console.Write(Sym);
 				}
 				Console.WriteLine();
 			}
-			MoveY(indentLow);
+			MoveY(IndentLow);
 			WriteBorder();
-		}
-		public override void Scale(double k)
-		{
-			height = (int)(k * double.Parse(height.ToString()));
 		}
 	}
 	class Treangle : Shape
 	{
 		public Treangle(int height = 1)
 		{
-			this.height = height;
+			Height = height;
 		}
 		public override void Draw()
 		{
 			WriteBorder();
-			MoveY(indentHigh);
+			MoveY(IndentHigh);
 			Console.WriteLine();
-			for (int i = 0; i < height; i++)
+			for (int i = 0; i < Height; i++)
 			{
 				MoveRight();
-				for (int j = 0; j < height - i - 1; j++)
+				for (int j = 0; j < Height - i - 1; j++)
 				{
 					Console.Write(" ");
 				}
 				for (int j = 0; j < (i + 1) * 2; j++)
 				{
-					Console.Write(sym);
+					Console.Write(Sym);
 				}
-				for (int j = 0; j < height - i - 1; j++)
+				for (int j = 0; j < Height - i - 1; j++)
 				{
 					Console.Write(" ");
 				}
 				Console.WriteLine();
 			}
-			MoveY(indentLow);
+			MoveY(IndentLow);
 			WriteBorder();
 
-		}
-		public override void Scale(double k)
-		{
-			height = (int)(k * double.Parse(height.ToString()));
 		}
 	}
 
