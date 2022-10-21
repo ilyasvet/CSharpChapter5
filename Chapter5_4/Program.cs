@@ -29,6 +29,11 @@ namespace Chapter5_4
 		{
 			Name = _Name;
 			Age = _Age;
+			Console.WriteLine("Person");
+		}
+		public virtual void Info()
+		{
+			Console.WriteLine($"{Name}, {Age} years old");
 		}
 	}
 	class Benefit
@@ -62,7 +67,7 @@ namespace Chapter5_4
 				}
 			}
 		}
-		public Employee(string _Name = "", byte _Age = 0, int? numb = null) : base(_Name, _Age)
+		public Employee(string _Name = "", byte _Age = 0, int? numb = null) : base(_Name, _Age) //вызывается также конструктор родителя
 		{
 			PersonalNumber = numb;
 		}
@@ -70,9 +75,13 @@ namespace Chapter5_4
 		{
 			return $"{Name} {Age} years old; Number: {PersonalNumber}\n";
 		}
+		public override sealed void Info()
+		{
+			base.Info();
+			Console.WriteLine("This is Employee");
+		}
 
 	}
-	
 
 	class Program
 	{
@@ -82,11 +91,13 @@ namespace Chapter5_4
 			Person.PI.ToString(); // константное поле является неявно статическим
 			Console.WriteLine(p.E.ToString()); // поля readonly не являются статическими. Можно задать в конструкторе
 
-			Employee employee = new Employee("Kirya", 19, 14124);
+			Employee employee = new Employee("Kirya", 19, 14124); //вызывается также конструктор родителя
 			Employee employee1 = new Employee("Danya", 18);
 			Employee employee2 = new Employee("Vlad", 19, 141243);
 			Console.WriteLine($"{employee}{employee1}{employee2}");
 			Console.WriteLine(employee2.GetBenefit());
+			employee.Info();
+			Person pe = new Employee();
 		}
 	}
 }

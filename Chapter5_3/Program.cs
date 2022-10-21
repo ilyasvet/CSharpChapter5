@@ -136,7 +136,7 @@ namespace Chapter5_3
 			Console.WriteLine();
 		}
 
-		public abstract void Draw();
+		public abstract void Draw(); //наследники обязаны определить этот метод
 	}
 	class Square : Shape
 	{
@@ -171,7 +171,6 @@ namespace Chapter5_3
 		{
 			WriteBorder();
 			MoveY(IndentHigh);
-			Console.WriteLine();
 			for (int i = 0; i < Height; i++)
 			{
 				MoveRight();
@@ -197,29 +196,9 @@ namespace Chapter5_3
 
 	class Program
 	{
-		static void ErrorMessage()
-		{
-			Console.WriteLine("Wrong command");
-		}
-
-		static void ShowList(Dictionary<string, Shape> shapes)
-		{
-			Console.WriteLine("==========List of shapes===========");
-			foreach (var shape in shapes)
-			{
-				Console.WriteLine($"Name - {shape.Key}\n" +
-					$"Height - {shape.Value.Height}," +
-					$" PosX - {shape.Value.Pos}," +
-					$" PaddingTop - {shape.Value.IndentHigh}," +
-					$" PaddingBottom - {shape.Value.IndentLow}," +
-					$" Symbol - {shape.Value.Sym}");
-			}
-		}
-
 		static void Main(string[] args)
 		{
 			List<Shape> list = new List<Shape>();
-			Dictionary<string, Shape> shapes = new Dictionary<string, Shape>();
 			
 			Console.WriteLine("Enter \"list\" for watching list\n" +
 				"Enter \"create sq/tr *name* *height*\"  to create new shape\n" +
@@ -227,123 +206,24 @@ namespace Chapter5_3
 				"Enter \"move *name* *posX* *padding top* *padding bottom*\" to move shape\n" +
 				"Enter \"scale *name* *double*\" to scale shape\n" +
 				"Enter \"End\" for exit\n");
-			
+
+			Dictionary<string, Command> commands = new Dictionary<string, Command>()
+			{
+				{ "list", new ListCommand() },
+				{ "create", new CreateCommand() },
+				{ "show", new ShowCommand() },
+				{ "move", new MoveCommand() },
+				{ "scale", new ScaleCommand() },
+			};
+
 			string command = "";
 			while (command.ToLower() != "end")
 			{
 				command = Console.ReadLine();
 				List<string> parts = command.Split(' ').ToList();
-				int argc = parts.Count;
-				switch (parts[0].ToLower())
-				{
-					case "list":
-						if (argc != 1)
-							ErrorMessage();
-						else
-						{
-							if (shapes.Count == 0)
-							{
-								Console.WriteLine("No shapes");
-							}
-							else
-							{
-								ShowList(shapes);
-							}
-						}
-						break;
-					case "create":
-						if (argc != 4)
-							ErrorMessage();
-						else
-						{
-							if (int.TryParse(parts[3], out int height))
-							{
-								if (parts[1] == "sq")
-								{
-									shapes.Add(parts[2], new Square(height));
-								}
-								else if (parts[1] == "tr")
-								{
-									shapes.Add(parts[2], new Treangle(height));
-								}
-								else
-								{
-									ErrorMessage();
-								}
-							}
-							else
-							{
-								ErrorMessage();
-							}
-						}
-						break;
-					case "show":
-						if (argc != 2)
-							ErrorMessage();
-						else
-						{
-							if (shapes.ContainsKey(parts[1]))
-							{
-								shapes[parts[1]].Draw();
-							}
-							else
-							{
-								Console.WriteLine("No such shape");
-							}
-						}
-						break;
-					case "move":
-						if (argc != 5)
-							ErrorMessage();
-						else
-						{
-							if (shapes.ContainsKey(parts[1]))
-							{
-								if (int.TryParse(parts[2], out int posX) &&
-									int.TryParse(parts[3], out int pT) &&
-									int.TryParse(parts[4], out int pB))
-								{
-									shapes[parts[1]].Move(posX, pT, pB);
-								}
-								else
-								{
-									ErrorMessage();
-								}
-							}
-							else
-							{
-								Console.WriteLine("No such shape");
-							}
-						}
-						break;
-					case "scale":
-						if (argc != 3)
-							ErrorMessage();
-						else
-						{
-							if (shapes.ContainsKey(parts[1]))
-							{
-								if (double.TryParse(parts[2], out double k))
-								{
-									shapes[parts[1]].Scale(k);
-								}
-								else
-								{
-									ErrorMessage();
-								}
-							}
-							else
-							{
-								Console.WriteLine("No such shape");
-							}
-						}
-						break;
-					case "end":
-						break;
-					default:
-						ErrorMessage();
-						break;
-				}
+				string commandName = parts[0].ToLower();
+				commands.TryGetValue(commandName, out Command c);
+				c?.Execute(parts);
 			}
 		}
 	}
